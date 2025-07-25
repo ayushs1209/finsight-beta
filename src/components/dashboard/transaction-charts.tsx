@@ -55,7 +55,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
     return (
       <div className="h-[250px] w-full">
         <ChartContainer config={chartConfig}>
-          <LineChart data={lineChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+          <LineChart data={lineChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid vertical={false} />
             <XAxis 
               dataKey="date" 
