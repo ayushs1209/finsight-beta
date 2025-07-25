@@ -6,7 +6,7 @@ import { parseCsv, transformDataToTransactions } from '@/lib/csv';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { UploadCloud, FileText } from 'lucide-react';
+import { UploadCloud, FileText, LogOut } from 'lucide-react';
 
 import StatsCards from './stats-cards';
 import TransactionCharts from './transaction-charts';
@@ -16,6 +16,10 @@ import FilterToolbar from './filter-toolbar';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '../theme-toggle';
 import ParticlesBackground from './particles-background';
+import { auth } from '@/lib/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
+
 
 export type Filters = {
   status: string[];
@@ -35,6 +39,7 @@ export default function Dashboard() {
   const [fileName, setFileName] = useState<string>('');
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const [filters, setFilters] = useState<Filters>(initialFilters);
 
@@ -77,6 +82,11 @@ export default function Dashboard() {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/auth');
+  };
+
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => {
       const statusMatch = filters.status.length > 0 ? filters.status.includes(t.status) : true;
@@ -93,8 +103,11 @@ export default function Dashboard() {
     return (
       <div className="relative flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background">
         <ParticlesBackground />
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
           <ThemeToggle />
+          <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <LogOut />
+          </Button>
         </div>
         <Card className="w-full max-w-lg shadow-lg z-10 bg-background/80 backdrop-blur-sm">
           <CardHeader>
@@ -143,6 +156,9 @@ export default function Dashboard() {
                 Upload New CSV
             </Button>
             <ThemeToggle />
+            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+              <LogOut />
+            </Button>
             <Input
               ref={fileInputRef} 
               id="csv-upload-main" 
