@@ -52,6 +52,7 @@ export default function AuthForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('signin');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,33 +61,13 @@ export default function AuthForm() {
       password: '',
     },
   });
-
-  const getAuthErrorMessage = (errorCode: string) => {
-    switch (errorCode) {
-      case 'auth/user-not-found':
-        return 'Account does not exist. Please check your email or sign up.';
-      case 'auth/wrong-password':
-        return 'Incorrect password. Please try again.';
-      case 'auth/email-already-in-use':
-        return 'This email address is already in use by another account.';
-      case 'auth/invalid-email':
-        return 'Please enter a valid email address.';
-      case 'auth/weak-password':
-        return 'The password is too weak. Please choose a stronger password.';
-      case 'auth/too-many-requests':
-        return 'Too many requests. Please try again later.';
-      case 'auth/user-disabled':
-        return 'This account has been disabled.';
-      default:
-        return 'An unexpected error occurred. Please try again.';
-    }
-  };
-
+  
   const handleAuthAction = async (
     values: z.infer<typeof formSchema>,
     isSignUp: boolean
   ) => {
     setIsLoading(true);
+    form.clearErrors();
     try {
       if (isSignUp) {
         await createUserWithEmailAndPassword(auth, values.email, values.password);
@@ -95,11 +76,32 @@ export default function AuthForm() {
       }
       router.push('/');
     } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Failed',
-        description: getAuthErrorMessage(error.code),
-      });
+      switch (error.code) {
+        case 'auth/user-not-found':
+          form.setError('email', { type: 'manual', message: 'Account does not exist. Please check your email or sign up.' });
+          break;
+        case 'auth/wrong-password':
+          form.setError('password', { type: 'manual', message: 'Incorrect password. Please try again.' });
+          break;
+        case 'auth/email-already-in-use':
+          form.setError('email', { type: 'manual', message: 'This email address is already in use by another account.' });
+          break;
+        case 'auth/invalid-email':
+          form.setError('email', { type: 'manual', message: 'Please enter a valid email address.' });
+          break;
+        case 'auth/weak-password':
+          form.setError('password', { type: 'manual', message: 'The password is too weak. Please choose a stronger password.' });
+          break;
+        case 'auth/too-many-requests':
+           form.setError('root', { type: 'manual', message: 'Too many requests. Please try again later.' });
+          break;
+        case 'auth/user-disabled':
+          form.setError('root', { type: 'manual', message: 'This account has been disabled.' });
+          break;
+        default:
+          form.setError('root', { type: 'manual', message: 'An unexpected error occurred. Please try again.'});
+          break;
+      }
     } finally {
       setIsLoading(false);
     }
@@ -112,10 +114,10 @@ export default function AuthForm() {
       await signInWithPopup(auth, provider);
       router.push('/');
     } catch (error: any) {
-      toast({
+       toast({
         variant: 'destructive',
         title: 'Google Sign-In Failed',
-        description: getAuthErrorMessage(error.code),
+        description: 'Could not sign in with Google. Please try again.',
       });
     } finally {
       setIsGoogleLoading(false);
@@ -149,7 +151,10 @@ export default function AuthForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="signin" className="w-full">
+        <Tabs defaultValue="signin" className="w-full" onValueChange={(value) => {
+            setActiveTab(value);
+            form.clearErrors();
+        }}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -188,6 +193,9 @@ export default function AuthForm() {
                     </FormItem>
                   )}
                 />
+                {form.formState.errors.root && (
+                    <FormMessage>{form.formState.errors.root.message}</FormMessage>
+                )}
                 <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
                   {isLoading ? 'Loading...' : 'Sign In'}
                 </Button>
@@ -229,6 +237,9 @@ export default function AuthForm() {
                     </FormItem>
                   )}
                 />
+                {form.formState.errors.root && (
+                    <FormMessage>{form.formState.errors.root.message}</FormMessage>
+                )}
                 <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
                   {isLoading ? 'Loading...' : 'Sign Up'}
                 </Button>
