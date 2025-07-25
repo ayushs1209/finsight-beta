@@ -69,8 +69,8 @@ export default function AuthForm() {
     try {
       if (isSignUp) {
         await createUserWithEmailAndPassword(auth, values.email, values.password);
-        toast({ title: "Sign up successful!", description: "You can now sign in."});
-        form.reset();
+        toast({ title: "Sign up successful!", description: "Redirecting to dashboard..."});
+        router.push('/');
       } else {
         await signInWithEmailAndPassword(auth, values.email, values.password);
         router.push('/');
