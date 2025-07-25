@@ -181,9 +181,8 @@ export default function LandingPage() {
             </div>
              <div className="mt-16">
                  <Image 
-                    src="https://placehold.co/1200x600.png" 
+                    src="https://cdn.dribbble.com/userupload/44242146/file/d3ec621def9a9ea591dc09b23d4b0ab6.png?resize=752x&vertical=center" 
                     alt="FinSight Dashboard Screenshot"
-                    data-ai-hint="dark dashboard"
                     width={1200}
                     height={600}
                     className="rounded-lg shadow-2xl border border-border mx-auto"
@@ -224,7 +223,7 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-4xl font-bold">Trusted by Finance Teams</h2>
               <p className="text-muted-foreground mt-4">
                 See what our users have to say about their experience with FinSight.
-              </p>
+              p>
             </div>
             <div className="grid lg:grid-cols-2 gap-8">
               {testimonials.map((testimonial, index) => (
