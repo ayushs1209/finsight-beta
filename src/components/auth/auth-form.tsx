@@ -118,6 +118,7 @@ export default function AuthForm() {
       await signInWithPopup(auth, provider);
       router.push('/dashboard');
     } catch (error: any) {
+       console.error("Google Sign-In Error:", error);
        toast({
         variant: 'destructive',
         title: 'Google Sign-In Failed',
