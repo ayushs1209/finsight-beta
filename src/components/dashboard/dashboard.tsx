@@ -21,17 +21,20 @@ export type Filters = {
   dateRange: { from?: Date; to?: Date };
 };
 
+const initialFilters: Filters = {
+  status: [],
+  recipient: '',
+  dateRange: {},
+};
+
+
 export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [fileName, setFileName] = useState<string>('');
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [filters, setFilters] = useState<Filters>({
-    status: [],
-    recipient: '',
-    dateRange: {},
-  });
+  const [filters, setFilters] = useState<Filters>(initialFilters);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,6 +60,7 @@ export default function Dashboard() {
             return;
           }
           setTransactions(transformedData);
+          setFilters(initialFilters); // Reset filters on new file upload
           toast({ title: 'Success', description: `${transformedData.length} transactions loaded.` });
         } catch (err) {
           toast({ variant: 'destructive', title: 'Parsing Failed', description: 'Could not parse the CSV file. Please check its format.' });
@@ -129,6 +133,14 @@ export default function Dashboard() {
             <UploadCloud className="mr-2 h-4 w-4" />
             Upload New CSV
         </Button>
+        <Input
+          ref={fileInputRef} 
+          id="csv-upload-main" 
+          type="file" 
+          accept=".csv" 
+          onChange={handleFileUpload} 
+          className="hidden" 
+        />
       </header>
 
       <StatsCards transactions={filteredTransactions} />
@@ -160,7 +172,7 @@ export default function Dashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FilterToolbar filters={filters} setFilters={setFilters} data={filteredTransactions} />
+          <FilterToolbar filters={filters} setFilters={setFilters} data={filteredTransactions} initialFilters={initialFilters} />
           <DataTable columns={columns} data={filteredTransactions} />
         </CardContent>
       </Card>

@@ -6,19 +6,21 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { CalendarIcon, Download, SlidersHorizontal } from 'lucide-react';
+import { CalendarIcon, Download, SlidersHorizontal, XIcon } from 'lucide-react';
 import type { Transaction } from '@/types';
 import type { Filters } from './dashboard';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { useMemo } from 'react';
 
 type FilterToolbarProps = {
   filters: Filters;
   setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   data: Transaction[];
+  initialFilters: Filters;
 };
 
-export default function FilterToolbar({ filters, setFilters, data }: FilterToolbarProps) {
+export default function FilterToolbar({ filters, setFilters, data, initialFilters }: FilterToolbarProps) {
   const { toast } = useToast();
 
   const handleStatusChange = (status: string) => {
@@ -48,6 +50,15 @@ export default function FilterToolbar({ filters, setFilters, data }: FilterToolb
     });
   };
 
+  const isFiltered = useMemo(() => {
+    return (
+      filters.recipient !== initialFilters.recipient ||
+      filters.status.length > 0 ||
+      filters.dateRange.from !== initialFilters.dateRange.from ||
+      filters.dateRange.to !== initialFilters.dateRange.to
+    );
+  }, [filters, initialFilters]);
+
   return (
     <div className="flex flex-wrap items-center gap-2 mb-4">
       <Input
@@ -59,7 +70,7 @@ export default function FilterToolbar({ filters, setFilters, data }: FilterToolb
       
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="h-9 w-[240px] justify-start text-left font-normal text-muted-foreground">
+          <Button variant="outline" className="h-9 w-[280px] justify-start text-left font-normal text-muted-foreground">
             <CalendarIcon className="mr-2 h-4 w-4" />
             {filters.dateRange.from ? 
               (filters.dateRange.to ? 
@@ -74,6 +85,9 @@ export default function FilterToolbar({ filters, setFilters, data }: FilterToolb
             selected={{ from: filters.dateRange.from, to: filters.dateRange.to }}
             onSelect={(range) => setFilters(prev => ({...prev, dateRange: { from: range?.from, to: range?.to }}))}
             numberOfMonths={2}
+            captionLayout="dropdown-buttons"
+            fromYear={2000}
+            toYear={new Date().getFullYear() + 1}
           />
         </PopoverContent>
       </Popover>
@@ -100,7 +114,16 @@ export default function FilterToolbar({ filters, setFilters, data }: FilterToolb
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Button onClick={handleExport} className="h-9 ml-auto">
+      {isFiltered && (
+        <Button variant="ghost" onClick={() => setFilters(initialFilters)} className="h-9">
+          <XIcon className="mr-2 h-4 w-4" />
+          Reset
+        </Button>
+      )}
+
+      <div className="flex-grow" />
+
+      <Button onClick={handleExport} className="h-9">
         <Download className="mr-2 h-4 w-4" />
         Export
       </Button>
