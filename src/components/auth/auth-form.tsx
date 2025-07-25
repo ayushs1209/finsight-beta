@@ -119,11 +119,19 @@ export default function AuthForm() {
       router.push('/dashboard');
     } catch (error: any) {
        console.error("Google Sign-In Error:", error);
-       toast({
-        variant: 'destructive',
-        title: 'Google Sign-In Failed',
-        description: 'Could not sign in with Google. Please try again.',
-      });
+       if (error.code === 'auth/popup-closed-by-user') {
+         toast({
+            variant: 'destructive',
+            title: 'Sign-in cancelled',
+            description: 'The sign-in popup was closed. Please try again and check if popups are enabled for this site.',
+         });
+       } else {
+         toast({
+          variant: 'destructive',
+          title: 'Google Sign-In Failed',
+          description: 'Could not sign in with Google. Please try again.',
+        });
+       }
     } finally {
       setIsGoogleLoading(false);
     }
@@ -159,6 +167,7 @@ export default function AuthForm() {
         <Tabs defaultValue="signin" className="w-full" onValueChange={(value) => {
             setActiveTab(value);
             form.clearErrors();
+            form.reset();
         }}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
