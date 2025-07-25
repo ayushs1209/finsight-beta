@@ -1,28 +1,25 @@
 import type { Transaction } from '@/types';
+import Papa from 'papaparse';
+
 
 export function parseCsv(csvText: string): Record<string, string>[] {
-  const lines = csvText.trim().split('\n');
-  if (lines.length < 2) return [];
-
-  // Trim and handle potential quotes in headers
-  const header = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-  const rows = lines.slice(1).map(line => {
-    // Improved regex to handle various CSV quoting and spacing scenarios
-    const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-    
-    if (values.length !== header.length) {
-      // Skip malformed rows
-      return null;
+  let data: Record<string, string>[] = [];
+  
+  Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: header => header.trim().toLowerCase().replace(/ /g, '_'),
+    complete: (results) => {
+      // It's possible for results.data to contain non-object values if there are issues, filter them out.
+      data = results.data.filter(row => typeof row === 'object' && row !== null && Object.keys(row).length > 0) as Record<string, string>[];
+    },
+    error: (error: any) => {
+      console.error('PapaParse Error:', error);
+      throw new Error('Failed to parse CSV: ' + error.message);
     }
+  });
 
-    const rowObject: Record<string, string> = {};
-    header.forEach((key, index) => {
-      // Remove quotes and trim whitespace from values
-      rowObject[key] = (values[index] || '').trim().replace(/^"|"$/g, '');
-    });
-    return rowObject;
-  }).filter(row => row !== null) as Record<string, string>[];
-  return rows;
+  return data;
 }
 
 const headerMappings: { [key in keyof Transaction]?: string[] } = {
@@ -70,8 +67,16 @@ export function transformDataToTransactions(data: Record<string, string>[]): Tra
   const generatedIdCounter = new Map<string, number>();
 
   return data.map((item, index) => {
-    const amount = parseFloat(item[fieldToHeaderMap.amount!] || '0');
+    const amountStr = item[fieldToHeaderMap.amount!] || '0';
+    // Remove currency symbols, commas, and whitespace before parsing
+    const cleanedAmountStr = amountStr.replace(/[^0-9.-]+/g,"");
+    const amount = parseFloat(cleanedAmountStr);
     
+    // Skip row if amount is not a valid number
+    if (isNaN(amount)) {
+      return null;
+    }
+
     // Generate a unique ID if one isn't found in the data
     let transactionId = item[fieldToHeaderMap.transactionId!] || '';
     if (!transactionId) {
@@ -86,11 +91,16 @@ export function transformDataToTransactions(data: Record<string, string>[]): Tra
     const dateValue = item[fieldToHeaderMap.date!];
     const date = dateValue ? new Date(dateValue) : new Date();
 
+    // Skip row if date is invalid
+    if (date.toString() === 'Invalid Date') {
+        return null;
+    }
+
     const statusRaw = (item[fieldToHeaderMap.status!] || 'Pending').toLowerCase();
     let status: Transaction['status'] = 'Pending';
-    if (statusRaw === 'completed' || statusRaw === 'success') {
+    if (statusRaw === 'completed' || statusRaw === 'success' || statusRaw === 'paid') {
       status = 'Completed';
-    } else if (statusRaw === 'failed' || statusRaw === 'error') {
+    } else if (statusRaw === 'failed' || statusRaw === 'error' || statusRaw === 'declined') {
       status = 'Failed';
     }
 
@@ -103,31 +113,17 @@ export function transformDataToTransactions(data: Record<string, string>[]): Tra
       paymentMethod: item[fieldToHeaderMap.paymentMethod!] || 'N/A',
       date,
     };
-  }).filter(t => !isNaN(t.amount) && t.date.toString() !== 'Invalid Date');
+  }).filter((t): t is Transaction => t !== null);
 }
 
 
 export function exportToCsv(data: Transaction[], filename: string = 'payouts.csv') {
   if (!data.length) return;
 
-  const header = ['transactionId', 'payoutId', 'amount', 'status', 'recipient', 'paymentMethod', 'date'];
-  const csvRows = [
-    header.join(','),
-    ...data.map(row =>
-      header.map(fieldName => {
-        const value = row[fieldName as keyof Transaction];
-        if (typeof value === 'string' && value.includes(',')) {
-          return `"${value}"`;
-        }
-        if (fieldName === 'date' && value instanceof Date) {
-            return value.toISOString();
-        }
-        return value;
-      }).join(',')
-    )
-  ];
+  const csvString = Papa.unparse(data, {
+    header: true,
+  });
   
-  const csvString = csvRows.join('\n');
   const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
   
   const link = document.createElement('a');
