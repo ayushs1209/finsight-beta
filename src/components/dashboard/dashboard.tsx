@@ -6,7 +6,7 @@ import { parseCsv, transformDataToTransactions } from '@/lib/csv';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { UploadCloud, FileText, LogOut } from 'lucide-react';
+import { UploadCloud, FileText, LogOut, DollarSign } from 'lucide-react';
 
 import StatsCards from './stats-cards';
 import TransactionCharts from './transaction-charts';
@@ -19,6 +19,7 @@ import ParticlesBackground from './particles-background';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 
 export type Filters = {
@@ -84,7 +85,7 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     await signOut(auth);
-    router.push('/auth');
+    router.push('/');
   };
 
   const filteredTransactions = useMemo(() => {
@@ -103,12 +104,19 @@ export default function Dashboard() {
     return (
       <div className="relative flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background">
         <ParticlesBackground />
-        <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
-          <ThemeToggle />
-          <Button variant="ghost" size="icon" onClick={handleSignOut}>
-            <LogOut />
-          </Button>
-        </div>
+        <header className="absolute top-0 left-0 right-0 p-4 z-10 flex justify-between items-center">
+            <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+                <DollarSign className="h-7 w-7 text-primary" />
+                <span className="text-foreground">FinSight</span>
+            </Link>
+            <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <Button variant="ghost" size="icon" onClick={handleSignOut}>
+                    <LogOut />
+                </Button>
+            </div>
+        </header>
+
         <Card className="w-full max-w-lg shadow-lg z-10 bg-background/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-3xl font-headline">FinSight Dashboard</CardTitle>
@@ -149,7 +157,12 @@ export default function Dashboard() {
       <ParticlesBackground />
       <div className='z-10 relative'>
         <header className="flex flex-wrap gap-4 justify-between items-center">
-          <h1 className="text-3xl font-bold font-headline">FinSight Dashboard</h1>
+          <div className="flex items-center gap-2 text-2xl font-bold">
+             <Link href="/" className="flex items-center gap-2">
+                <DollarSign className="h-7 w-7 text-primary" />
+                <h1>FinSight</h1>
+            </Link>
+          </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
                 <UploadCloud className="mr-2 h-4 w-4" />

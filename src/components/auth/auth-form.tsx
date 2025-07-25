@@ -78,7 +78,7 @@ export default function AuthForm() {
       } else {
         await signInWithEmailAndPassword(auth, values.email, values.password);
       }
-      router.push('/');
+      router.push('/dashboard');
     } catch (error: any) {
       switch (error.code) {
         case 'auth/user-not-found':
@@ -116,7 +116,7 @@ export default function AuthForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/');
+      router.push('/dashboard');
     } catch (error: any) {
        toast({
         variant: 'destructive',
@@ -135,7 +135,7 @@ export default function AuthForm() {
                 <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-card px-2 text-muted-foreground">
                 Or continue with
                 </span>
             </div>

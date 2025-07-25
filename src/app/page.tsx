@@ -1,12 +1,11 @@
-import Dashboard from '@/components/dashboard/dashboard';
-import ProtectedRoute from '@/components/auth/protected-route';
+import LandingPage from '@/components/landing/landing-page';
 import { Toaster } from '@/components/ui/toaster';
 
 export default function Home() {
   return (
-    <ProtectedRoute>
-      <Dashboard />
+    <>
+      <LandingPage />
       <Toaster />
-    </ProtectedRoute>
+    </>
   );
 }
