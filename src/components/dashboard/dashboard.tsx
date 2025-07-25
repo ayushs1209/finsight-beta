@@ -15,6 +15,7 @@ import { columns } from './columns';
 import FilterToolbar from './filter-toolbar';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '../theme-toggle';
+import ParticlesBackground from './particles-background';
 
 export type Filters = {
   status: string[];
@@ -91,10 +92,11 @@ export default function Dashboard() {
   if (transactions.length === 0) {
     return (
       <div className="relative flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background">
-        <div className="absolute top-4 right-4">
+        <ParticlesBackground />
+        <div className="absolute top-4 right-4 z-10">
           <ThemeToggle />
         </div>
-        <Card className="w-full max-w-lg shadow-lg">
+        <Card className="w-full max-w-lg shadow-lg z-10 bg-background/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="text-3xl font-headline">FinSight Dashboard</CardTitle>
             <CardDescription>Upload your CSV to visualize payout data</CardDescription>
@@ -130,59 +132,62 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 bg-background">
-      <header className="flex flex-wrap gap-4 justify-between items-center">
-        <h1 className="text-3xl font-bold font-headline">FinSight Dashboard</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
-              <UploadCloud className="mr-2 h-4 w-4" />
-              Upload New CSV
-          </Button>
-          <ThemeToggle />
-          <Input
-            ref={fileInputRef} 
-            id="csv-upload-main" 
-            type="file" 
-            accept=".csv" 
-            onChange={handleFileUpload} 
-            className="hidden" 
-          />
-        </div>
-      </header>
+    <div className="relative p-4 md:p-8 space-y-6 bg-background">
+      <ParticlesBackground />
+      <div className='z-10 relative'>
+        <header className="flex flex-wrap gap-4 justify-between items-center">
+          <h1 className="text-3xl font-bold font-headline">FinSight Dashboard</h1>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                <UploadCloud className="mr-2 h-4 w-4" />
+                Upload New CSV
+            </Button>
+            <ThemeToggle />
+            <Input
+              ref={fileInputRef} 
+              id="csv-upload-main" 
+              type="file" 
+              accept=".csv" 
+              onChange={handleFileUpload} 
+              className="hidden" 
+            />
+          </div>
+        </header>
 
-      <StatsCards transactions={filteredTransactions} />
-      
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="lg:col-span-4 overflow-hidden">
+        <StatsCards transactions={filteredTransactions} />
+        
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="lg:col-span-4 overflow-hidden bg-background/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Payouts Over Time</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TransactionCharts data={filteredTransactions} type="line" />
+            </CardContent>
+          </Card>
+          <Card className="lg:col-span-3 overflow-hidden bg-background/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Payouts by Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TransactionCharts data={filteredTransactions} type="bar" />
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="bg-background/80 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>Payouts Over Time</CardTitle>
+            <CardTitle>All Payouts</CardTitle>
+            <CardDescription>
+              {filteredTransactions.length} of {transactions.length} transactions shown.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <TransactionCharts data={filteredTransactions} type="line" />
-          </CardContent>
-        </Card>
-        <Card className="lg:col-span-3 overflow-hidden">
-          <CardHeader>
-            <CardTitle>Payouts by Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TransactionCharts data={filteredTransactions} type="bar" />
+            <FilterToolbar filters={filters} setFilters={setFilters} data={filteredTransactions} initialFilters={initialFilters} />
+            <DataTable columns={columns} data={filteredTransactions} />
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Payouts</CardTitle>
-          <CardDescription>
-            {filteredTransactions.length} of {transactions.length} transactions shown.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <FilterToolbar filters={filters} setFilters={setFilters} data={filteredTransactions} initialFilters={initialFilters} />
-          <DataTable columns={columns} data={filteredTransactions} />
-        </CardContent>
-      </Card>
     </div>
   );
 }
