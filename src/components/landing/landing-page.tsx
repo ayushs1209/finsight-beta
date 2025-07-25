@@ -223,7 +223,7 @@ export default function LandingPage() {
               <h2 className="text-3xl md:text-4xl font-bold">Trusted by Finance Teams</h2>
               <p className="text-muted-foreground mt-4">
                 See what our users have to say about their experience with FinSight.
-              p>
+              </p>
             </div>
             <div className="grid lg:grid-cols-2 gap-8">
               {testimonials.map((testimonial, index) => (
