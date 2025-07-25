@@ -52,19 +52,19 @@ export default function Dashboard() {
         try {
           const parsedData = parseCsv(text);
           if (parsedData.length === 0) {
-            toast({ variant: 'destructive', title: 'Invalid File', description: 'CSV file is empty or improperly formatted.' });
+            toast({ variant: 'destructive', title: 'Empty or Invalid CSV', description: 'The CSV file is empty or could not be parsed.' });
             return;
           }
           const transformedData = transformDataToTransactions(parsedData);
           if (transformedData.length === 0) {
-            toast({ variant: 'destructive', title: 'Parsing Error', description: 'No valid transactions found. Check CSV headers (e.g., transaction_id, amount, status, recipient, date).' });
+            toast({ variant: 'destructive', title: 'No Transactions Found', description: 'Could not find any valid transactions. Please check the CSV file for required columns (like amount) and valid data.' });
             return;
           }
           setTransactions(transformedData);
           setFilters(initialFilters); // Reset filters on new file upload
           toast({ title: 'Success', description: `${transformedData.length} transactions loaded.` });
-        } catch (err) {
-          toast({ variant: 'destructive', title: 'Parsing Failed', description: 'Could not parse the CSV file. Please check its format.' });
+        } catch (err: any) {
+          toast({ variant: 'destructive', title: 'Parsing Failed', description: err.message || 'Could not parse the CSV file. Please check its format.' });
           console.error(err);
         }
       };

@@ -59,17 +59,17 @@ export function transformDataToTransactions(data: Record<string, string>[]): Tra
     }
   }
 
-  // Amount is required. If we can't find it, we can't process the file.
+  // If no amount column is found, we can't process transactions effectively.
   if (!fieldToHeaderMap.amount) {
-    return [];
+    console.warn("Could not find a valid 'amount' column in the CSV.");
   }
 
   const generatedIdCounter = new Map<string, number>();
 
   return data.map((item, index) => {
-    const amountStr = item[fieldToHeaderMap.amount!] || '0';
+    const amountStr = fieldToHeaderMap.amount ? item[fieldToHeaderMap.amount] : '0';
     // Remove currency symbols, commas, and whitespace before parsing
-    const cleanedAmountStr = amountStr.replace(/[^0-9.-]+/g,"");
+    const cleanedAmountStr = (amountStr || '0').replace(/[^0-9.-]+/g,"");
     const amount = parseFloat(cleanedAmountStr);
     
     // Skip row if amount is not a valid number
