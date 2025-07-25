@@ -186,7 +186,7 @@ export default function LandingPage() {
                     data-ai-hint="dashboard fintech"
                     width={1200}
                     height={600}
-                    className="rounded-lg shadow-2xl border border-border"
+                    className="rounded-lg shadow-2xl border border-border mx-auto"
                  />
             </div>
           </div>
