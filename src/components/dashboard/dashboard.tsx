@@ -14,6 +14,7 @@ import { DataTable } from './data-table';
 import { columns } from './columns';
 import FilterToolbar from './filter-toolbar';
 import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from '../theme-toggle';
 
 export type Filters = {
   status: string[];
@@ -129,18 +130,21 @@ export default function Dashboard() {
     <div className="p-4 md:p-8 space-y-6 bg-background">
       <header className="flex flex-wrap gap-4 justify-between items-center">
         <h1 className="text-3xl font-bold font-headline">FinSight Dashboard</h1>
-        <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
-            <UploadCloud className="mr-2 h-4 w-4" />
-            Upload New CSV
-        </Button>
-        <Input
-          ref={fileInputRef} 
-          id="csv-upload-main" 
-          type="file" 
-          accept=".csv" 
-          onChange={handleFileUpload} 
-          className="hidden" 
-        />
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+              <UploadCloud className="mr-2 h-4 w-4" />
+              Upload New CSV
+          </Button>
+          <ThemeToggle />
+          <Input
+            ref={fileInputRef} 
+            id="csv-upload-main" 
+            type="file" 
+            accept=".csv" 
+            onChange={handleFileUpload} 
+            className="hidden" 
+          />
+        </div>
       </header>
 
       <StatsCards transactions={filteredTransactions} />
@@ -154,7 +158,7 @@ export default function Dashboard() {
             <TransactionCharts data={filteredTransactions} type="line" />
           </CardContent>
         </Card>
-        <Card className="lg:col-span-3">
+        <Card className="lg:col-span-3 overflow-hidden">
           <CardHeader>
             <CardTitle>Payouts by Status</CardTitle>
           </CardHeader>

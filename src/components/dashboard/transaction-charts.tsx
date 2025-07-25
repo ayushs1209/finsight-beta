@@ -69,7 +69,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
               tickLine={false}
               axisLine={false}
               fontSize={12}
-              tickFormatter={(value) => `$${(Number(value) / 1000).toFixed(0)}k`}
+              tickFormatter={(value) => `$${new Intl.NumberFormat('en-US', { notation: 'compact' , compactDisplay: 'short' }).format(Number(value))}`}
             />
             <Tooltip 
               cursor={false}
