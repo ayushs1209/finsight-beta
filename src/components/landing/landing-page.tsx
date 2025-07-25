@@ -103,15 +103,19 @@ export default function LandingPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold">
-            <DollarSign className="h-7 w-7 text-primary" />
-            <span>FinSight</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+          <div className="flex items-center space-x-4">
+            <Link href="/" className="flex items-center gap-2 text-xl font-bold">
+              <DollarSign className="h-7 w-7 text-primary" />
+              <span>FinSight</span>
+            </Link>
+          </div>
+          
+          <nav className="hidden md:flex items-center justify-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 text-sm font-medium">
             <Link href="#features" className="hover:text-primary transition-colors">Features</Link>
             <Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link>
             <Link href="#" className="hover:text-primary transition-colors">Pricing</Link>
           </nav>
+          
           <div className="hidden md:flex items-center gap-2">
             <Button variant="ghost" asChild>
                 <Link href="/auth">Sign In</Link>
@@ -121,6 +125,7 @@ export default function LandingPage() {
             </Button>
             <ThemeToggle />
           </div>
+
           <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild className="md:hidden">
                   <Button variant="ghost" size="icon">
