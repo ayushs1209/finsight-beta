@@ -61,6 +61,22 @@ export default function AuthForm() {
     },
   });
 
+  const getAuthErrorMessage = (errorCode: string) => {
+    switch (errorCode) {
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+        return 'Invalid email or password. Please try again.';
+      case 'auth/email-already-in-use':
+        return 'This email address is already in use.';
+      case 'auth/invalid-email':
+        return 'Please enter a valid email address.';
+      case 'auth/weak-password':
+        return 'The password is too weak. Please choose a stronger password.';
+      default:
+        return 'An unexpected error occurred. Please try again.';
+    }
+  };
+
   const handleAuthAction = async (
     values: z.infer<typeof formSchema>,
     isSignUp: boolean
@@ -69,17 +85,15 @@ export default function AuthForm() {
     try {
       if (isSignUp) {
         await createUserWithEmailAndPassword(auth, values.email, values.password);
-        toast({ title: "Sign up successful!", description: "Redirecting to dashboard..."});
-        router.push('/');
       } else {
         await signInWithEmailAndPassword(auth, values.email, values.password);
-        router.push('/');
       }
+      router.push('/');
     } catch (error: any) {
       toast({
         variant: 'destructive',
         title: 'Authentication Failed',
-        description: error.message,
+        description: getAuthErrorMessage(error.code),
       });
     } finally {
       setIsLoading(false);
@@ -96,7 +110,7 @@ export default function AuthForm() {
       toast({
         variant: 'destructive',
         title: 'Google Sign-In Failed',
-        description: error.message,
+        description: getAuthErrorMessage(error.code),
       });
     } finally {
       setIsGoogleLoading(false);
