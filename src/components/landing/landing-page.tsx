@@ -183,7 +183,7 @@ export default function LandingPage() {
                  <Image 
                     src="https://placehold.co/1200x600.png" 
                     alt="FinSight Dashboard Screenshot"
-                    data-ai-hint="dashboard fintech"
+                    data-ai-hint="dark dashboard"
                     width={1200}
                     height={600}
                     className="rounded-lg shadow-2xl border border-border mx-auto"
