@@ -4,17 +4,24 @@ export function parseCsv(csvText: string): Record<string, string>[] {
   const lines = csvText.trim().split('\n');
   if (lines.length < 2) return [];
 
-  const header = lines[0].split(',').map(h => h.trim());
+  // Trim and handle potential quotes in headers
+  const header = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
   const rows = lines.slice(1).map(line => {
-    // Handle commas within quoted fields
-    const values = line.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g) ?? [];
+    // Improved regex to handle various CSV quoting and spacing scenarios
+    const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    
+    if (values.length !== header.length) {
+      // Skip malformed rows
+      return null;
+    }
+
     const rowObject: Record<string, string> = {};
     header.forEach((key, index) => {
-       // Remove quotes from parsed values
-      rowObject[key] = values[index]?.replace(/"/g, '') || '';
+      // Remove quotes and trim whitespace from values
+      rowObject[key] = (values[index] || '').trim().replace(/^"|"$/g, '');
     });
     return rowObject;
-  });
+  }).filter(row => row !== null) as Record<string, string>[];
   return rows;
 }
 
