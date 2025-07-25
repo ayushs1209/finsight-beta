@@ -55,7 +55,6 @@ export default function AuthForm() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('signin');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -113,7 +112,7 @@ export default function AuthForm() {
   };
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
+    setIsLoading(true);
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
@@ -134,7 +133,7 @@ export default function AuthForm() {
         });
        }
     } finally {
-      setIsGoogleLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -151,8 +150,8 @@ export default function AuthForm() {
             </div>
         </div>
         <div className="space-y-2">
-            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
-                {isGoogleLoading ? 'Loading...' : <><GoogleIcon className="mr-2 h-4 w-4" /> Google</>}
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+                {isLoading ? 'Loading...' : <><GoogleIcon className="mr-2 h-4 w-4" /> Google</>}
             </Button>
             <Button variant="ghost" className="w-full text-muted-foreground" asChild>
                 <Link href="/">
@@ -230,7 +229,7 @@ export default function AuthForm() {
                 {form.formState.errors.root && (
                     <FormMessage>{form.formState.errors.root.message}</FormMessage>
                 )}
-                <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Loading...' : 'Sign In'}
                 </Button>
               </form>
@@ -285,7 +284,7 @@ export default function AuthForm() {
                 {form.formState.errors.root && (
                     <FormMessage>{form.formState.errors.root.message}</FormMessage>
                 )}
-                <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+                <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? 'Loading...' : 'Sign Up'}
                 </Button>
               </form>
