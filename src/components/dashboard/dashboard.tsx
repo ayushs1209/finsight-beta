@@ -132,7 +132,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="relative p-4 md:p-8 space-y-6 bg-background">
+    <div className="relative p-4 md:p-8 bg-background">
       <ParticlesBackground />
       <div className='z-10 relative'>
         <header className="flex flex-wrap gap-4 justify-between items-center">
@@ -154,39 +154,41 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <StatsCards transactions={filteredTransactions} />
-        
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="lg:col-span-4 overflow-hidden bg-background/80 backdrop-blur-sm">
+        <div className="space-y-6 mt-6">
+          <StatsCards transactions={filteredTransactions} />
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+            <Card className="lg:col-span-4 overflow-hidden bg-background/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Payouts Over Time</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TransactionCharts data={filteredTransactions} type="line" />
+              </CardContent>
+            </Card>
+            <Card className="lg:col-span-3 overflow-hidden bg-background/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Payouts by Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TransactionCharts data={filteredTransactions} type="bar" />
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="bg-background/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle>Payouts Over Time</CardTitle>
+              <CardTitle>All Payouts</CardTitle>
+              <CardDescription>
+                {filteredTransactions.length} of {transactions.length} transactions shown.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <TransactionCharts data={filteredTransactions} type="line" />
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-3 overflow-hidden bg-background/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle>Payouts by Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TransactionCharts data={filteredTransactions} type="bar" />
+              <FilterToolbar filters={filters} setFilters={setFilters} data={filteredTransactions} initialFilters={initialFilters} />
+              <DataTable columns={columns} data={filteredTransactions} />
             </CardContent>
           </Card>
         </div>
-
-        <Card className="bg-background/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle>All Payouts</CardTitle>
-            <CardDescription>
-              {filteredTransactions.length} of {transactions.length} transactions shown.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FilterToolbar filters={filters} setFilters={setFilters} data={filteredTransactions} initialFilters={initialFilters} />
-            <DataTable columns={columns} data={filteredTransactions} />
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
