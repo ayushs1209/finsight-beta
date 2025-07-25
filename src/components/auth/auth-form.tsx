@@ -31,7 +31,8 @@ import {
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -149,9 +150,17 @@ export default function AuthForm() {
                 </span>
             </div>
         </div>
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
-            {isGoogleLoading ? 'Loading...' : <><GoogleIcon className="mr-2 h-4 w-4" /> Google</>}
-        </Button>
+        <div className="space-y-2">
+            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
+                {isGoogleLoading ? 'Loading...' : <><GoogleIcon className="mr-2 h-4 w-4" /> Google</>}
+            </Button>
+            <Button variant="ghost" className="w-full text-muted-foreground" asChild>
+                <Link href="/">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Go Back
+                </Link>
+            </Button>
+        </div>
     </>
   );
 

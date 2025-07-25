@@ -16,7 +16,7 @@ export default function AuthPage() {
         <ThemeToggle />
       </header>
       <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="w-full max-w-md z-10">
+        <div className="w-full max-w-md z-10 mt-8">
           <AuthForm />
         </div>
       </div>
