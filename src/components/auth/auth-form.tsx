@@ -101,7 +101,7 @@ export default function AuthForm() {
           form.setError('root', { type: 'manual', message: 'This account has been disabled.' });
           break;
         default:
-          form.setError('root', { type: 'manual', message: "The email or the password doesn't match, please try again" });
+          form.setError('root', { type: 'manual', message: "Incorrect credentials. Please try again" });
           break;
       }
     } finally {
