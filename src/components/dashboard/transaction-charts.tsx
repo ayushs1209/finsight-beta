@@ -68,8 +68,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
               tickLine={false}
               axisLine={false}
               fontSize={12}
-              tickFormatter={(value) => `$${Number(value) / 1000}k`}
-              domain={['dataMin', 'dataMax']}
+              tickFormatter={(value) => `$${(Number(value) / 1000).toFixed(1)}k`}
             />
             <Tooltip 
               cursor={false}
