@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Transaction } from '@/types';
@@ -53,7 +54,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
 
   if (type === 'line') {
     return (
-      <div className="h-[200px] w-full">
+      <div className="h-[250px] md:h-[300px] w-full">
         <ChartContainer config={chartConfig}>
           <LineChart data={lineChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid vertical={false} />
@@ -68,7 +69,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
               tickLine={false}
               axisLine={false}
               fontSize={12}
-              tickFormatter={(value) => `$${(Number(value) / 1000).toFixed(1)}k`}
+              tickFormatter={(value) => `$${(Number(value) / 1000).toFixed(0)}k`}
             />
             <Tooltip 
               cursor={false}
@@ -86,7 +87,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
 
   if (type === 'bar') {
     return (
-      <div className="h-[200px] w-full">
+      <div className="h-[250px] md:h-[300px] w-full">
         <ChartContainer config={chartConfig}>
           <BarChart data={barChartData} layout="vertical" margin={{ left: 10, right: 10 }}>
             <CartesianGrid horizontal={false} />
