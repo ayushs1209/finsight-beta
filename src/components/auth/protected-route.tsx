@@ -10,16 +10,18 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !user) {
-      // If user is not authenticated and not on the auth or landing page, redirect to auth page.
-      if (pathname !== '/auth' && pathname !== '/') {
-        router.push('/auth');
-      }
+    if (loading) return;
+
+    // If there's no user, they should only be able to access the landing page or the auth page.
+    // Redirect them to the auth page if they try to access anything else.
+    if (!user && pathname !== '/' && pathname !== '/auth') {
+      router.push('/auth');
     }
   }, [user, loading, router, pathname]);
 
+  // While loading, or if a user is not authenticated and on a protected page,
+  // don't render the children. A loading indicator or null is appropriate.
   if (loading || !user) {
-    // Return null or a loader, but ensure children (the protected content) are not rendered.
     return null;
   }
 
