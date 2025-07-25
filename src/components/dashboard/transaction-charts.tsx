@@ -54,7 +54,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
 
   if (type === 'line') {
     return (
-      <div className="h-[250px] md:h-[350px] w-full">
+      <div className="h-[250px] md:h-[400px] w-full">
         <ChartContainer config={chartConfig}>
           <LineChart data={lineChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid vertical={false} />
@@ -87,7 +87,7 @@ export default function TransactionCharts({ data, type }: TransactionChartsProps
 
   if (type === 'bar') {
     return (
-      <div className="h-[250px] md:h-[350px] w-full">
+      <div className="h-[250px] md:h-[400px] w-full">
         <ChartContainer config={chartConfig}>
           <BarChart data={barChartData} layout="vertical" margin={{ left: 10, right: 10 }}>
             <CartesianGrid horizontal={false} />
