@@ -96,10 +96,10 @@ export function transformDataToTransactions(data: Record<string, string>[]): Tra
         return null;
     }
 
-    const statusRaw = (item[fieldToHeaderMap.status!] || 'Pending').toLowerCase();
-    let status: Transaction['status'] = 'Pending';
-    if (statusRaw === 'completed' || statusRaw === 'success' || statusRaw === 'paid') {
-      status = 'Completed';
+    const statusRaw = (item[fieldToHeaderMap.status!] || 'Completed').toLowerCase();
+    let status: Transaction['status'] = 'Completed';
+    if (statusRaw === 'pending') {
+      status = 'Pending';
     } else if (statusRaw === 'failed' || statusRaw === 'error' || statusRaw === 'declined') {
       status = 'Failed';
     }
