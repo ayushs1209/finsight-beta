@@ -64,14 +64,19 @@ export default function AuthForm() {
   const getAuthErrorMessage = (errorCode: string) => {
     switch (errorCode) {
       case 'auth/user-not-found':
+        return 'Account does not exist. Please check your email or sign up.';
       case 'auth/wrong-password':
-        return 'Invalid email or password. Please try again.';
+        return 'Incorrect password. Please try again.';
       case 'auth/email-already-in-use':
-        return 'This email address is already in use.';
+        return 'This email address is already in use by another account.';
       case 'auth/invalid-email':
         return 'Please enter a valid email address.';
       case 'auth/weak-password':
         return 'The password is too weak. Please choose a stronger password.';
+      case 'auth/too-many-requests':
+        return 'Too many requests. Please try again later.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
       default:
         return 'An unexpected error occurred. Please try again.';
     }
