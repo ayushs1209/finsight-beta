@@ -1,25 +1,21 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import Particles, { initParticlesEngine } from "react-tsparticles";
-import { type Container, type ISourceOptions } from "tsparticles-engine";
+import { useCallback, useMemo } from "react";
+import Particles from "react-tsparticles";
+import type { Container, Engine, ISourceOptions } from "tsparticles-engine";
 import { loadSlim } from "tsparticles-slim";
 import { useTheme } from "next-themes";
 
 const ParticlesBackground = () => {
-  const [init, setInit] = useState(false);
   const { theme } = useTheme();
 
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
+  const particlesInit = useCallback(async (engine: Engine) => {
+    await loadSlim(engine);
   }, []);
 
-  const particlesLoaded = async (container?: Container): Promise<void> => {
-    // console.log("particles.js loaded", container);
-  };
+  const particlesLoaded = useCallback(
+    async (container?: Container) => {},
+    []
+  );
 
   const options: ISourceOptions = useMemo(
     () => ({
@@ -87,18 +83,15 @@ const ParticlesBackground = () => {
     [theme],
   );
 
-  if (init) {
-    return (
-        <Particles
-            id="tsparticles"
-            particlesLoaded={particlesLoaded}
-            options={options}
-            className="absolute inset-0 z-0"
-        />
-    );
-  }
-
-  return null;
+  return (
+    <Particles
+      id="tsparticles"
+      init={particlesInit}
+      loaded={particlesLoaded}
+      options={options}
+      className="absolute inset-0 z-0"
+    />
+  );
 };
 
 export default ParticlesBackground;
