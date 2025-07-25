@@ -146,7 +146,7 @@ export default function Dashboard() {
       <StatsCards transactions={filteredTransactions} />
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="lg:col-span-4">
+        <Card className="lg:col-span-4 overflow-hidden">
           <CardHeader>
             <CardTitle>Payouts Over Time</CardTitle>
           </CardHeader>
