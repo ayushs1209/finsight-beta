@@ -90,7 +90,10 @@ export default function Dashboard() {
 
   if (transactions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background">
+      <div className="relative flex flex-col items-center justify-center min-h-screen p-4 text-center bg-background">
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
         <Card className="w-full max-w-lg shadow-lg">
           <CardHeader>
             <CardTitle className="text-3xl font-headline">FinSight Dashboard</CardTitle>
